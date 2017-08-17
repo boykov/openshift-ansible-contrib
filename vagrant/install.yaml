@@ -36,3 +36,10 @@
 
   - include: tasks/install_bootstrap_enterprise.yaml
     when: "{{ deployment_type == 'openshift-enterprise' }}"
+
+- name: Install java
+  hosts: all
+  tasks:
+  - yum:
+      name: java-1.8.0-openjdk-headless
+      state: installed

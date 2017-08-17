@@ -203,5 +203,17 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       ansible.groups = ansible_groups
       ansible.host_vars = ansible_host_vars
     end
+
+    admin1.vm.provision :ansible_local do |ansible|
+      ansible.verbose        = true
+      ansible.install        = false
+      ansible.limit          = "OSEv3:localhost"
+      ansible.provisioning_path = '/home/vagrant/sync/vagrant'
+      ansible.playbook = "/home/vagrant/openshift-ansible/playbooks/byo/openshift-cluster/openshift-logging.yml"
+      ansible.groups = ansible_groups
+      ansible.host_vars = ansible_host_vars
+      ansible.raw_arguments = ['-M', '/home/vagrant/openshift-ansible/library/']
+      ansible.galaxy_roles_path = "/home/vagrant/openshift-ansible/roles"
+    end
   end
 end

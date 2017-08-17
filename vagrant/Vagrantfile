@@ -117,18 +117,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     master1.hostmanager.aliases = %w(master1)
   end
 
-  config.vm.define "node1" do |node1|
-    node1.vm.network :private_network, ip: "#{NETWORK_BASE}.#{INTEGRATION_START_SEGMENT + 1}"
-    node1.vm.hostname = "node1.example.com"
-    node1.hostmanager.aliases = %w(node1)
-  end
-
-  config.vm.define "node2" do |node2|
-    node2.vm.network :private_network, ip: "#{NETWORK_BASE}.#{INTEGRATION_START_SEGMENT + 2}"
-    node2.vm.hostname = "node2.example.com"
-    node2.hostmanager.aliases = %w(node2)
-  end
-
   config.vm.define "admin1" do |admin1|
     admin1.vm.network :private_network, ip: "#{NETWORK_BASE}.#{INTEGRATION_START_SEGMENT + 3}"
     admin1.vm.hostname = "admin1.example.com"
@@ -144,7 +132,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     admin1.vm.synced_folder ".vagrant", "/home/vagrant/.hidden", type: sync_type
 
     ansible_groups = {
-      OSEv3: ["master1", "node1", "node2"],
+      OSEv3: ["master1"],
       'OSEv3:children': ["masters", "nodes", "etcd", "nfs"],
       'OSEv3:vars': {
         ansible_become: true,
@@ -169,7 +157,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       etcd: ["master1"],
       nfs: ["admin1"],
       masters: ["master1"],
-      nodes: ["master1", "node1", "node2"],
+      nodes: ["master1"],
     }
 
     ansible_host_vars = {
@@ -179,20 +167,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         openshift_schedulable: true,
         ansible_host: '192.168.50.20',
         ansible_ssh_private_key_file: "/home/vagrant/.ssh/master1.key"
-      },
-      node1: {
-        openshift_ip: '192.168.50.21',
-        openshift_node_labels: "\"{'region': 'primary', 'zone': 'east'}\"",
-        openshift_schedulable: true,
-        ansible_host: '192.168.50.21',
-        ansible_ssh_private_key_file: "/home/vagrant/.ssh/node1.key"
-      },
-      node2: {
-        openshift_ip: '192.168.50.22',
-        openshift_node_labels: "\"{'region': 'primary', 'zone': 'west'}\"",
-        openshift_schedulable: true,
-        ansible_host: '192.168.50.22',
-        ansible_ssh_private_key_file: "/home/vagrant/.ssh/node2.key"
       },
       admin1: {
         ansible_connection: 'local',

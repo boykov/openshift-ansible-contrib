@@ -93,8 +93,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.provider "virtualbox" do |v, override|
     #v.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate//vagrant","1"]
-    v.memory = 1024
-    v.cpus = 1
+    v.memory = 2248
+    v.cpus = 4
     override.vm.box = box_name
     provider_name = 'virtualbox'
   end
@@ -118,6 +118,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   config.vm.define "admin1" do |admin1|
+    admin1.vm.provider :virtualbox do |vb|
+      vb.customize ["modifyvm", :id, "--memory", "312"]
+      vb.customize ["modifyvm", :id, "--cpus", "1"]
+    end
     admin1.vm.network :private_network, ip: "#{NETWORK_BASE}.#{INTEGRATION_START_SEGMENT + 3}"
     admin1.vm.hostname = "admin1.example.com"
     admin1.hostmanager.aliases = %w(admin1)
